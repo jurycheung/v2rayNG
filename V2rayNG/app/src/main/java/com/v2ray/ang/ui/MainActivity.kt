@@ -1,5 +1,6 @@
 package com.v2ray.ang.ui
 
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
@@ -8,7 +9,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
-import android.view.MenuItem
+import android.MenuItem
+import android.view.animation.DecelerateInterpolator
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -180,9 +182,12 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
         binding.tvTestState.text = content
     }
 
+    private var pulseAnimator: ValueAnimator? = null
+    
     private  fun applyRunningState(isLoading: Boolean, isRunning: Boolean) {
         if (isLoading) {
             binding.fab.setImageResource(R.drawable.ic_fab_check)
+            stopPulseAnimation()
             return
         }
 
@@ -192,13 +197,69 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
             binding.fab.contentDescription = getString(R.string.action_stop_service)
             setTestState(getString(R.string.connection_connected))
             binding.layoutTest.isFocusable = true
+            // Start pulse animation when connected
+            startPulseAnimation()
+            // Show connection success particles
+            showConnectionParticles()
         } else {
             binding.fab.setImageResource(R.drawable.ic_play_24dp)
             binding.fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_fab_inactive))
             binding.fab.contentDescription = getString(R.string.tasker_start_service)
             setTestState(getString(R.string.connection_not_connected))
             binding.layoutTest.isFocusable = false
+            // Stop pulse animation when disconnected
+            stopPulseAnimation()
         }
+    }
+    
+    /**
+     * Start pulse breathing animation for FAB when connected
+     */
+    private fun startPulseAnimation() {
+        stopPulseAnimation() // Stop any existing animation
+        
+        pulseAnimator = ValueAnimator.ofFloat(1f, 1.15f, 1f).apply {
+            duration = 2000
+            repeatCount = ValueAnimator.INFINITE
+            addUpdateListener { animator ->
+                val scale = animator.animatedValue as Float
+                binding.fab.scaleX = scale
+                binding.fab.scaleY = scale
+                binding.fab.alpha = 0.85f + (scale - 1f) * 0.15f
+            }
+            start()
+        }
+    }
+    
+    /**
+     * Stop pulse animation
+     */
+    private fun stopPulseAnimation() {
+        pulseAnimator?.cancel()
+        pulseAnimator = null
+        // Reset to normal state
+        binding.fab.scaleX = 1f
+        binding.fab.scaleY = 1f
+        binding.fab.alpha = 1f
+    }
+    
+    /**
+     * Show particle explosion effect on connection
+     */
+    private fun showConnectionParticles() {
+        // Simplified version - can be enhanced with Lottie or custom View
+        binding.fab.animate()
+            .scaleX(1.3f)
+            .scaleY(1.3f)
+            .setDuration(150)
+            .withEndAction {
+                binding.fab.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(150)
+                    .start()
+            }
+            .start()
     }
 
     override fun onResume() {
@@ -641,6 +702,7 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
 
     override fun onDestroy() {
         tabMediator?.detach()
+        stopPulseAnimation()
         super.onDestroy()
     }
 }
