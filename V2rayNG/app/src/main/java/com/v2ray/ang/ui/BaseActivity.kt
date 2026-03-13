@@ -213,4 +213,30 @@ abstract class BaseActivity : AppCompatActivity() {
     protected fun isLoadingVisible(): Boolean {
         return progressBar?.visibility == View.VISIBLE
     }
+    
+    /**
+     * Animate views in hierarchy with cascade fade-in effect
+     * Call this in onCreate after setContentView to animate page load
+     * 
+     * @param root The root ViewGroup to animate
+     * @param delay Base delay in milliseconds (default: 0)
+     */
+    protected fun animateViewHierarchy(root: ViewGroup, delay: Long = 0) {
+        for (i in 0 until root.childCount) {
+            val child = root.getChildAt(i)
+            child.alpha = 0f
+            child.translationY = 20f
+            child.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setStartDelay(delay + i * 50)
+                .setDuration(300)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+            
+            if (child is ViewGroup) {
+                animateViewHierarchy(child, delay + i * 50)
+            }
+        }
+    }
 }

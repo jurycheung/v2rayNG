@@ -1,5 +1,6 @@
 package com.v2ray.ang.ui
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -55,25 +56,41 @@ class MainRecyclerAdapter(
 
             holder.itemView.setBackgroundColor(Color.TRANSPARENT)
 
+            // Apply gradient border background
+            holder.itemMainBinding.root.setBackgroundResource(R.drawable.server_item_border)
+
             //Name address
             holder.itemMainBinding.tvName.text = profile.remarks
             holder.itemMainBinding.tvStatistics.text = getAddress(profile)
             holder.itemMainBinding.tvType.text = profile.configType.name
 
-            //TestResult
+            //TestResult with gradient color
             val aff = MmkvManager.decodeServerAffiliationInfo(guid)
             holder.itemMainBinding.tvTestResult.text = aff?.getTestDelayString().orEmpty()
-            if ((aff?.testDelayMillis ?: 0L) < 0L) {
-                holder.itemMainBinding.tvTestResult.setTextColor(ContextCompat.getColor(context, R.color.colorPingRed))
-            } else {
-                holder.itemMainBinding.tvTestResult.setTextColor(ContextCompat.getColor(context, R.color.colorPing))
+            val delay = aff?.testDelayMillis ?: 0L
+            when {
+                delay < 0L -> {
+                    holder.itemMainBinding.tvTestResult.setTextColor(ContextCompat.getColor(context, R.color.md_theme_error))
+                }
+                delay < 100L -> {
+                    holder.itemMainBinding.tvTestResult.setTextColor(ContextCompat.getColor(context, R.color.md_theme_tertiary))
+                }
+                delay < 300L -> {
+                    holder.itemMainBinding.tvTestResult.setTextColor(ContextCompat.getColor(context, R.color.md_theme_secondary))
+                }
+                else -> {
+                    holder.itemMainBinding.tvTestResult.setTextColor(ContextCompat.getColor(context, R.color.md_theme_outline))
+                }
             }
 
-            //layoutIndicator
+            //layoutIndicator with gradient
             if (guid == MmkvManager.getSelectServer()) {
-                holder.itemMainBinding.layoutIndicator.setBackgroundResource(R.color.colorIndicator)
+                holder.itemMainBinding.layoutIndicator.setBackgroundResource(R.color.md_theme_secondary)
+                // Animate selection
+                animateServerSelection(holder, true)
             } else {
                 holder.itemMainBinding.layoutIndicator.setBackgroundResource(0)
+                animateServerSelection(holder, false)
             }
 
             //subscription remarks
@@ -202,5 +219,31 @@ class MainRecyclerAdapter(
     }
 
     override fun onItemDismiss(position: Int) {
+    }
+    
+    /**
+     * Animate server selection with scale and alpha effect
+     */
+    private fun animateServerSelection(holder: MainViewHolder, isSelected: Boolean) {
+        holder.itemView.clearAnimation()
+        
+        if (isSelected) {
+            // Selected: scale up slightly and increase alpha
+            ValueAnimator.ofFloat(1f, 1.02f, 1f).apply {
+                duration = 200
+                addUpdateListener { animator ->
+                    val scale = animator.animatedValue as Float
+                    holder.itemView.scaleX = scale
+                    holder.itemView.scaleY = scale
+                    holder.itemView.alpha = 0.9f + (scale - 1f) * 0.1f
+                }
+                start()
+            }
+        } else {
+            // Not selected: reset
+            holder.itemView.scaleX = 1f
+            holder.itemView.scaleY = 1f
+            holder.itemView.alpha = 1f
+        }
     }
 }

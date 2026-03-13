@@ -36,13 +36,15 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
+                    <!-- Data stream progress bar with gradient -->
                     <com.google.android.material.progressindicator.LinearProgressIndicator
                         android:id="@+id/progress_bar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:indeterminate="true"
                         android:visibility="invisible"
-                        app:indicatorColor="@color/color_fab_active" />
+                        app:indicatorColor="@color/md_theme_secondary"
+                        app:trackColor="@color/md_theme_surfaceVariant" />
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tab_group"
@@ -60,41 +62,75 @@
                         android:scrollbars="vertical"
                         android:layout_weight="1" />
 
-                    <LinearLayout
+                    <!-- Connection status card with enhanced design -->
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/layout_test"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_height_dp64"
+                        android:layout_height="wrap_content"
                         android:clickable="true"
                         android:contentDescription="@string/connection_test_pending"
                         android:focusable="true"
                         android:nextFocusLeft="@+id/view_pager"
                         android:nextFocusRight="@+id/fab"
-                        android:orientation="vertical">
+                        app:cardBackgroundColor="@color/md_theme_surfaceVariant"
+                        app:cardCornerRadius="0dp"
+                        app:cardElevation="0dp">
 
-                        <View
-                            android:layout_width="wrap_content"
-                            android:layout_height="1dp"
-                            android:background="@color/divider_color_light" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="16dp">
 
-                        <TextView
-                            android:id="@+id/tv_test_state"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:gravity="start|center"
-                            android:maxLines="2"
-                            android:minLines="1"
-                            android:paddingStart="@dimen/padding_spacing_dp16"
-                            android:text="@string/connection_test_pending"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                            <!-- Status indicator light -->
+                            <View
+                                android:id="@+id/status_indicator_light"
+                                android:layout_width="10dp"
+                                android:layout_height="10dp"
+                                android:layout_gravity="center_vertical"
+                                android:background="@drawable/status_indicator_disconnected" />
 
-                    </LinearLayout>
+                            <!-- Status text -->
+                            <TextView
+                                android:id="@+id/tv_test_state"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="12dp"
+                                android:fontFamily="@font/jetbrains_mono_medium"
+                                android:textColor="@color/md_theme_onSurface"
+                                android:textSize="14sp"
+                                android:text="@string/connection_test_pending" />
+
+                            <!-- Latency display -->
+                            <TextView
+                                android:id="@+id/tv_latency_display"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/jetbrains_mono_bold"
+                                android:textColor="@color/md_theme_tertiary"
+                                android:textSize="16sp"
+                                android:visibility="gone" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
 
+                <!-- FAB with glow effect -->
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|end"
                     android:layout_marginEnd="@dimen/padding_spacing_dp16">
+
+                    <!-- Glow background for FAB -->
+                    <View
+                        android:id="@+id/fab_glow_background"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_marginBottom="@dimen/view_height_dp36"
+                        android:background="@drawable/fab_pulse_background"
+                        android:visibility="gone" />
 
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
                         android:id="@+id/fab_locate"
@@ -106,6 +142,8 @@
                         android:contentDescription="@string/title_server"
                         android:focusable="true"
                         android:src="@android:drawable/ic_menu_mylocation"
+                        app:backgroundTint="@color/md_theme_surfaceVariant"
+                        app:tint="@color/md_theme_secondary"
                         app:layout_anchorGravity="bottom|right|end" />
 
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -119,7 +157,9 @@
                         android:focusable="true"
                         android:nextFocusLeft="@+id/layout_test"
                         android:src="@drawable/ic_play_24dp"
-                        app:tint="@color/colorWhite"
+                        app:backgroundTint="@color/md_theme_secondary"
+                        app:tint="@color/md_theme_primary"
+                        app:elevation="8dp"
                         app:layout_anchorGravity="bottom|right|end" />
 
                 </FrameLayout>

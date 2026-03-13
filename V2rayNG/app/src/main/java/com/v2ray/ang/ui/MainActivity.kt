@@ -71,6 +71,9 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
         setContentView(binding.root)
         setupToolbar(binding.toolbar, false, getString(R.string.title_server))
 
+        // Apply page load animation
+        animateViewHierarchy(binding.root, 100)
+
         // setup viewpager and tablayout
         groupPagerAdapter = GroupPagerAdapter(this, emptyList())
         binding.viewPager.adapter = groupPagerAdapter
@@ -156,7 +159,7 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
             setTestState(getString(R.string.connection_test_testing))
             mainViewModel.testCurrentServerRealPing()
         } else {
-            // service not running: keep existing no-op (could show a message if desired)
+            // service not running: keep existing no-op
         }
     }
 
@@ -180,6 +183,21 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
 
     private fun setTestState(content: String?) {
         binding.tvTestState.text = content
+        // Update status indicator light
+        updateStatusIndicator(content != null && content.isNotEmpty())
+    }
+    
+    /**
+     * Update status indicator light based on connection state
+     */
+    private fun updateStatusIndicator(isActive: Boolean) {
+        val statusLight = findViewById<View>(R.id.status_indicator_light)
+        if (statusLight != null) {
+            statusLight.setBackgroundResource(
+                if (isActive) R.drawable.status_indicator_connected
+                else R.drawable.status_indicator_disconnected
+            )
+        }
     }
 
     private var pulseAnimator: ValueAnimator? = null
