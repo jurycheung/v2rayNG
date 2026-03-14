@@ -9,7 +9,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
-import android.MenuItem
+import android.view.MenuItem
+import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -311,7 +312,7 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.import_qrcode -> {
             importQRcode()
             true
