@@ -89,7 +89,7 @@ jobs:
     - name: Decode Keystore
       uses: timheuer/base64-to-file@v1
       id: android_keystore
-      if: ${{ secrets.APP_KEYSTORE_BASE64 != '' }}
+      continue-on-error: true
       with:
         fileName: "android_keystore.jks"
         encodedString: ${{ secrets.APP_KEYSTORE_BASE64 }}
@@ -103,6 +103,7 @@ jobs:
         if [ -n "${{ steps.android_keystore.outputs.filePath }}" ]; then
           ./gradlew assembleRelease -Pandroid.injected.signing.store.file=${{ steps.android_keystore.outputs.filePath }} -Pandroid.injected.signing.store.password=${{ secrets.APP_KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.APP_KEYSTORE_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.APP_KEY_PASSWORD }}
         else
+          echo "No keystore found, building debug version..."
           ./gradlew assembleFdroidDebug
         fi
 
@@ -132,7 +133,6 @@ jobs:
 
     - name: Upload debug APK as fallback
       uses: actions/upload-artifact@v4
-      if: ${{ success() && steps.android_keystore.outputs.filePath == '' }}
       with:
         name: fdroid-debug
         path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/fdroid/debug/*.apk
