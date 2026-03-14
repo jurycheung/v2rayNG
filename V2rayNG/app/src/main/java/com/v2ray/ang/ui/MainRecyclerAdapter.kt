@@ -56,9 +56,6 @@ class MainRecyclerAdapter(
 
             holder.itemView.setBackgroundColor(Color.TRANSPARENT)
 
-            // Apply gradient border background
-            holder.itemMainBinding.root.setBackgroundResource(R.drawable.server_item_border)
-
             //Name address
             holder.itemMainBinding.tvName.text = profile.remarks
             holder.itemMainBinding.tvStatistics.text = getAddress(profile)
