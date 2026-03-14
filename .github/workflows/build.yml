@@ -101,24 +101,24 @@ jobs:
         fi
 
     - name: Upload arm64-v8a APK
+      if: always()
       uses: actions/upload-artifact@v4
-      if: ${{ success() }}
       with:
         name: arm64-v8a
         path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/*/release/*arm64-v8a*.apk
         if-no-files-found: ignore
 
     - name: Upload armeabi-v7a APK
+      if: always()
       uses: actions/upload-artifact@v4
-      if: ${{ success() }}
       with:
         name: armeabi-v7a
         path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/*/release/*armeabi-v7a*.apk
         if-no-files-found: ignore
 
     - name: Upload x86 APK
+      if: always()
       uses: actions/upload-artifact@v4
-      if: ${{ success() }}
       with:
         name: x86-apk
         path: ${{ github.workspace }}/V2rayNG/app/build/outputs/apk/*/release/*x86*.apk
