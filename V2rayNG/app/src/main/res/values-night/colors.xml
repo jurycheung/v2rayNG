@@ -1,52 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_fab_active">#f97910</color>
-    <color name="color_fab_inactive">#646464</color>
-    <color name="divider_color_light">#424242</color>
+    <!-- Legacy colors - keep for compatibility -->
+    <color name="colorPing">#00FF94</color>
+    <color name="colorPingRed">#FFAB00</color>
+    <color name="colorConfigType">#00D4FF</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="color_fab_active">#00D4FF</color>
+    <color name="color_fab_inactive">#3A4552</color>
+    <color name="divider_color_light">#2A3441</color>
+    <color name="colorIndicator">@color/md_theme_secondary</color>
 
-    <!-- Primary colors - main tone: gray -->
-    <color name="md_theme_primary">#C0C0C0</color>
-    <color name="md_theme_onPrimary">#303030</color>
-    <color name="md_theme_primaryContainer">#474747</color>
-    <color name="md_theme_onPrimaryContainer">#E0E0E0</color>
+    <!-- Primary colors - Deep Space Gray -->
+    <color name="md_theme_primary">#0A0E14</color>
+    <color name="md_theme_onPrimary">#E8ECF1</color>
+    <color name="md_theme_primaryContainer">#151B25</color>
+    <color name="md_theme_onPrimaryContainer">#B8C1CC</color>
 
-    <!-- Secondary colors - accent color: orange -->
-    <color name="md_theme_secondary">#FFB687</color>
-    <color name="md_theme_onSecondary">#4E2600</color>
-    <color name="md_theme_secondaryContainer">#6F3800</color>
-    <color name="md_theme_onSecondaryContainer">#FFE8D6</color>
+    <!-- Secondary colors - Neon Cyan (Network Connection) -->
+    <color name="md_theme_secondary">#00D4FF</color>
+    <color name="md_theme_onSecondary">#001A22</color>
+    <color name="md_theme_secondaryContainer">#002A33</color>
+    <color name="md_theme_onSecondaryContainer">#80EBFF</color>
 
-    <!-- Tertiary colors - tertiary color: green -->
-    <color name="md_theme_tertiary">#83D6B5</color>
-    <color name="md_theme_onTertiary">#00382E</color>
-    <color name="md_theme_tertiaryContainer">#005143</color>
-    <color name="md_theme_onTertiaryContainer">#A0F2D0</color>
+    <!-- Tertiary colors - Signal Green (Connection Status) -->
+    <color name="md_theme_tertiary">#00FF94</color>
+    <color name="md_theme_onTertiary">#002214</color>
+    <color name="md_theme_tertiaryContainer">#003322</color>
+    <color name="md_theme_onTertiaryContainer">#4DFFB9</color>
 
-    <!-- Error colors -->
-    <color name="md_theme_error">#FFB4AB</color>
-    <color name="md_theme_errorContainer">#93000A</color>
-    <color name="md_theme_onError">#690005</color>
-    <color name="md_theme_onErrorContainer">#FFDAD6</color>
+    <!-- Error colors - Amber Alert -->
+    <color name="md_theme_error">#FFAB00</color>
+    <color name="md_theme_onError">#261900</color>
+    <color name="md_theme_errorContainer">#332200</color>
+    <color name="md_theme_onErrorContainer">#FFD666</color>
 
-    <!-- Background colors -->
-    <color name="md_theme_background">#1C1B1F</color>
-    <color name="md_theme_onBackground">#E6E1E5</color>
+    <!-- Background colors - Layered Depth -->
+    <color name="md_theme_background">#0A0E14</color>
+    <color name="md_theme_onBackground">#E8ECF1</color>
 
     <!-- Surface colors -->
-    <color name="md_theme_surface">#1C1B1F</color>
-    <color name="md_theme_onSurface">#E6E1E5</color>
-    <color name="md_theme_surfaceVariant">#49454F</color>
-    <color name="md_theme_onSurfaceVariant">#CAC4D0</color>
-    <color name="md_theme_inverseSurface">#E6E1E5</color>
-    <color name="md_theme_inverseOnSurface">#1C1B1F</color>
+    <color name="md_theme_surface">#121820</color>
+    <color name="md_theme_onSurface">#E8ECF1</color>
+    <color name="md_theme_surfaceVariant">#1A2230</color>
+    <color name="md_theme_onSurfaceVariant">#B8C1CC</color>
+    <color name="md_theme_inverseSurface">#E8ECF1</color>
+    <color name="md_theme_inverseOnSurface">#151B25</color>
 
     <!-- Outline colors -->
-    <color name="md_theme_outline">#938F99</color>
-    <color name="md_theme_outlineVariant">#49454F</color>
+    <color name="md_theme_outline">#3A4552</color>
+    <color name="md_theme_outlineVariant">#4A5568</color>
 
     <!-- Other colors -->
-    <color name="md_theme_inversePrimary">#000000</color>
+    <color name="md_theme_inversePrimary">#00D4FF</color>
     <color name="md_theme_shadow">#000000</color>
-    <color name="md_theme_surfaceTint">#C0C0C0</color>
+    <color name="md_theme_surfaceTint">#00D4FF</color>
     <color name="md_theme_scrim">#000000</color>
+
+    <!-- Additional effect colors -->
+    <color name="glow_cyan">#4000D4FF</color>
+    <color name="glow_green">#4000FF94</color>
+    <color name="border_gradient_start">#00D4FF</color>
+    <color name="border_gradient_center">#00FF94</color>
+    <color name="border_gradient_end">#00D4FF</color>
 </resources>
