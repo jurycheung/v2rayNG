@@ -79,10 +79,19 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
+    - name: Check if Keystore Secret is Set
+      id: check_keystore
+      run: |
+        if [ -n "${{ secrets.APP_KEYSTORE_BASE64 }}" ]; then
+          echo "has_keystore=true" >> $GITHUB_OUTPUT
+        else
+          echo "has_keystore=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Decode Keystore
+      if: steps.check_keystore.outputs.has_keystore == 'true'
       uses: timheuer/base64-to-file@v1
       id: android_keystore
-      continue-on-error: true
       with:
         fileName: "android_keystore.jks"
         encodedString: ${{ secrets.APP_KEYSTORE_BASE64 }}
@@ -93,8 +102,9 @@ jobs:
         echo "sdk.dir=${ANDROID_HOME}" > local.properties
         chmod 755 gradlew
         ./gradlew licenseFdroidReleaseReport
-        if [ -n "${{ steps.android_keystore.outputs.filePath }}" ]; then
-          ./gradlew assembleRelease -Pandroid.injected.signing.store.file=${{ steps.android_keystore.outputs.filePath }} -Pandroid.injected.signing.store.password=${{ secrets.APP_KEYSTORE_PASSWORD }} -Pandroid.injected.signing.key.alias=${{ secrets.APP_KEYSTORE_ALIAS }} -Pandroid.injected.signing.key.password=${{ secrets.APP_KEY_PASSWORD }}
+        if [ "${{ steps.check_keystore.outputs.has_keystore }}" == "true" ] && [ -n "${{ steps.android_keystore.outputs.filePath }}" ] && [ -f "${{ steps.android_keystore.outputs.filePath }}" ]; then
+          echo "Keystore found, building release version..."
+          ./gradlew assembleFdroidRelease
         else
           echo "No keystore found, building debug version..."
           ./gradlew assembleFdroidDebug
