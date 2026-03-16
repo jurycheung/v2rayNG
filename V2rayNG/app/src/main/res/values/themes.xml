@@ -1,26 +1,26 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Common base theme: Cyber-Industrial Utilitarian -->
+    <!-- Common base theme: Clean Modern Light -->
     <style name="AppThemeBase" parent="Theme.Material3.DayNight">
-        <!-- Primary colors - Deep Space Gray -->
+        <!-- Primary colors -->
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
         <item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer</item>
 
-        <!-- Secondary colors - Neon Cyan (Network Connection) -->
+        <!-- Secondary colors -->
         <item name="colorSecondary">@color/md_theme_secondary</item>
         <item name="colorOnSecondary">@color/md_theme_onSecondary</item>
         <item name="colorSecondaryContainer">@color/md_theme_secondaryContainer</item>
         <item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer</item>
 
-        <!-- Tertiary colors - Signal Green (Connection Status) -->
+        <!-- Tertiary colors -->
         <item name="colorTertiary">@color/md_theme_tertiary</item>
         <item name="colorOnTertiary">@color/md_theme_onTertiary</item>
         <item name="colorTertiaryContainer">@color/md_theme_tertiaryContainer</item>
         <item name="colorOnTertiaryContainer">@color/md_theme_onTertiaryContainer</item>
 
-        <!-- Error colors - Amber Alert -->
+        <!-- Error colors -->
         <item name="colorError">@color/md_theme_error</item>
         <item name="colorOnError">@color/md_theme_onError</item>
         <item name="colorErrorContainer">@color/md_theme_errorContainer</item>
@@ -50,16 +50,39 @@
         <!-- Other colors -->
         <item name="colorPrimaryInverse">@color/md_theme_inversePrimary</item>
 
-        <!-- Status bar and navigation bar - Dark theme -->
-        <item name="android:statusBarColor">@color/md_theme_primary</item>
-        <item name="android:navigationBarColor">@color/md_theme_primary</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+        <!-- Status bar and navigation bar - Light theme -->
+        <item name="android:statusBarColor">@color/md_theme_surface</item>
+        <item name="android:navigationBarColor">@color/md_theme_surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+
+        <!-- Material 3 Shape appearances for rounded corners -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.AppTheme.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.AppTheme.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.AppTheme.LargeComponent</item>
     </style>
 
-    <!-- Day/Night theme: Dark mode focused -->
+    <!-- Small component shape - 8dp corners -->
+    <style name="ShapeAppearance.AppTheme.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <!-- Medium component shape - 12dp corners -->
+    <style name="ShapeAppearance.AppTheme.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <!-- Large component shape - 16dp corners -->
+    <style name="ShapeAppearance.AppTheme.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <!-- Day/Night theme: Light mode focused -->
     <style name="AppThemeDayNight" parent="AppThemeBase">
-        <!-- Force dark mode for cyber-industrial aesthetic -->
+        <!-- Force light mode for clean modern aesthetic -->
     </style>
 
     <!-- Theme without ActionBar -->
