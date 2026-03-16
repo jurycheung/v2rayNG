@@ -537,6 +537,7 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
                     toast(getString(R.string.title_update_config_count, result.configCount))
                     testRealPingAndSort()
                     // hideLoading 会在测试完成后调用
+                    // reloadServerList 会在测试完成后的 onTestsFinished 中调用
                 } else {
                     // 有失败或跳过，但没有成功配置
                     toast(
@@ -546,8 +547,6 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
                         )
                     )
                     hideLoading()
-                }
-                if (result.configCount > 0) {
                     mainViewModel.reloadServerList()
                 }
             }
