@@ -6,14 +6,14 @@
             <gradient
                 android:type="radial"
                 android:gradientRadius="80%p"
-                android:startColor="#6000FF94"
+                android:startColor="#600066CC"
                 android:endColor="#00000000" />
         </shape>
     </item>
     <!-- Inner circle -->
     <item android:left="3dp" android:top="3dp" android:right="3dp" android:bottom="3dp">
         <shape android:shape="oval">
-            <solid android:color="#00FF94" />
+            <solid android:color="#0066CC" />
         </shape>
     </item>
 </layer-list>

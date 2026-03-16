@@ -6,14 +6,14 @@
             <gradient
                 android:type="radial"
                 android:gradientRadius="120%p"
-                android:startColor="#4000D4FF"
+                android:startColor="#400066CC"
                 android:endColor="#00000000" />
         </shape>
     </item>
     <!-- Main button -->
     <item android:left="4dp" android:top="4dp" android:right="4dp" android:bottom="4dp">
         <shape android:shape="oval">
-            <solid android:color="#00D4FF" />
+            <solid android:color="#0066CC" />
         </shape>
     </item>
 </layer-list>

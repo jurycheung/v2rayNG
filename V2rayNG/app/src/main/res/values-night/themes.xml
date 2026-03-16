@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Night theme: inherit the shared AppThemeBase and only override night-specific items -->
+    <!-- Night theme: use the same light theme for consistent clean modern aesthetic -->
+    <!-- Dark mode is disabled to maintain clean white & slate gray design -->
     <style name="AppThemeDayNight" parent="AppThemeBase">
-        <!-- Night mode specific overrides -->
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+        <!-- Force light mode for consistent clean modern aesthetic -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
     </style>
 
 </resources>
