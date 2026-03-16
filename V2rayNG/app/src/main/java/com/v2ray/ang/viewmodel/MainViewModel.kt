@@ -414,8 +414,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return config?.subscriptionId
     }
 
-    private var forceSortAfterTest = false
-
     fun onTestsFinished(forceSort: Boolean = false) {
         viewModelScope.launch(Dispatchers.Default) {
             if (MmkvManager.decodeSettingsBool(AppConfig.PREF_AUTO_REMOVE_INVALID_AFTER_TEST)) {
