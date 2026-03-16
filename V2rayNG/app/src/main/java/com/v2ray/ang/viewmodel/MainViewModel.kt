@@ -207,6 +207,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch(Dispatchers.Default) {
             if (serversCache.isEmpty()) {
+                // 没有服务器需要测试，直接发送完成信号
+                withContext(Dispatchers.Main) {
+                    onTestsFinished(forceSortAfterTest)
+                    forceSortAfterTest = false
+                    updateListAction.value = -2
+                }
                 return@launch
             }
             MessageUtil.sendMsg2TestService(

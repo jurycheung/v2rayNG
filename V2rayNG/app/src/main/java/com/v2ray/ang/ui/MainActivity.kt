@@ -532,12 +532,14 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
                 if (result.successCount + result.failureCount + result.skipCount == 0) {
                     toast(R.string.title_update_subscription_no_subscription)
                     hideLoading()
+                    mainViewModel.reloadServerList()
                 } else if (result.configCount > 0) {
-                    // 更新成功，测试真连接并排序
+                    // 更新成功，先刷新列表再测试真连接并排序
+                    mainViewModel.reloadServerList()
                     toast(getString(R.string.title_update_config_count, result.configCount))
                     testRealPingAndSort()
                     // hideLoading 会在测试完成后调用
-                    // reloadServerList 会在测试完成后的 onTestsFinished 中调用
+                    // reloadServerList 会在测试完成后的 onTestsFinished 中再次调用以更新排序
                 } else {
                     // 有失败或跳过，但没有成功配置
                     toast(
