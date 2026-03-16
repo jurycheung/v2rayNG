@@ -51,6 +51,7 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
     val mainViewModel: MainViewModel by viewModels()
     private lateinit var groupPagerAdapter: GroupPagerAdapter
     private var tabMediator: TabLayoutMediator? = null
+    private var shouldHideLoadingAfterTest = false
 
     private val requestVpnPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
@@ -115,6 +116,13 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
         mainViewModel.updateTestResultAction.observe(this) { setTestState(it) }
         mainViewModel.isRunning.observe(this) { isRunning ->
             applyRunningState(false, isRunning)
+        }
+        mainViewModel.updateListAction.observe(this) { index ->
+            // index = -2 indicates tests finished, can hide loading if needed
+            if (index == -2 && shouldHideLoadingAfterTest) {
+                shouldHideLoadingAfterTest = false
+                hideLoading()
+            }
         }
         mainViewModel.startListenBroadcast()
         mainViewModel.initAssets(assets)
@@ -523,23 +531,41 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
             launch(Dispatchers.Main) {
                 if (result.successCount + result.failureCount + result.skipCount == 0) {
                     toast(R.string.title_update_subscription_no_subscription)
-                } else if (result.successCount > 0 && result.failureCount + result.skipCount == 0) {
+                    hideLoading()
+                } else if (result.configCount > 0) {
+                    // 更新成功，测试真连接并排序
                     toast(getString(R.string.title_update_config_count, result.configCount))
+                    testRealPingAndSort()
+                    // hideLoading 会在测试完成后调用
                 } else {
+                    // 有失败或跳过，但有成功
                     toast(
                         getString(
                             R.string.title_update_subscription_result,
                             result.configCount, result.successCount, result.failureCount, result.skipCount
                         )
                     )
+                    testRealPingAndSort()
+                    // hideLoading 会在测试完成后调用
                 }
                 if (result.configCount > 0) {
                     mainViewModel.reloadServerList()
                 }
-                hideLoading()
             }
         }
         return true
+    }
+
+    /**
+     * Test real ping and sort after subscription update
+     */
+    private fun testRealPingAndSort() {
+        toast(getString(R.string.connection_test_testing_count, mainViewModel.serversCache.count()))
+        // 设置标志，让测试完成后强制排序
+        mainViewModel.forceSortAfterTest = true
+        shouldHideLoadingAfterTest = true
+        mainViewModel.testAllRealPing()
+        // hideLoading 会在测试完成后在 onTestsFinished 中调用
     }
 
     private fun exportAll() {

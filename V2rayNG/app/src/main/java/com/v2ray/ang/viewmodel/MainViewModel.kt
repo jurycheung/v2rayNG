@@ -45,6 +45,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val updateListAction by lazy { MutableLiveData<Int>() }
     val updateTestResultAction by lazy { MutableLiveData<String>() }
     private val tcpingTestScope by lazy { CoroutineScope(Dispatchers.IO) }
+    internal var forceSortAfterTest = false
 
     /**
      * Refer to the official documentation for [registerReceiver](https://developer.android.com/reference/androidx/core/content/ContextCompat#registerReceiver(android.content.Context,android.content.BroadcastReceiver,android.content.IntentFilter,int):
@@ -413,13 +414,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return config?.subscriptionId
     }
 
-    fun onTestsFinished() {
+    private var forceSortAfterTest = false
+
+    fun onTestsFinished(forceSort: Boolean = false) {
         viewModelScope.launch(Dispatchers.Default) {
             if (MmkvManager.decodeSettingsBool(AppConfig.PREF_AUTO_REMOVE_INVALID_AFTER_TEST)) {
                 removeInvalidServer()
             }
 
-            if (MmkvManager.decodeSettingsBool(AppConfig.PREF_AUTO_SORT_AFTER_TEST)) {
+            if (forceSort || MmkvManager.decodeSettingsBool(AppConfig.PREF_AUTO_SORT_AFTER_TEST)) {
                 sortByTestResults()
             }
 
@@ -473,7 +476,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 AppConfig.MSG_MEASURE_CONFIG_FINISH -> {
                     val content = intent.getStringExtra("content")
                     if (content == "0") {
-                        onTestsFinished()
+                        onTestsFinished(forceSortAfterTest)
+                        forceSortAfterTest = false
+                        // Notify that tests are finished, activity can hide loading
+                        updateListAction.value = -2 // Special value to indicate tests finished
                     }
                 }
             }
