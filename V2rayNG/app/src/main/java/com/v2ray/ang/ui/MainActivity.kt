@@ -538,15 +538,14 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
                     testRealPingAndSort()
                     // hideLoading 会在测试完成后调用
                 } else {
-                    // 有失败或跳过，但有成功
+                    // 有失败或跳过，但没有成功配置
                     toast(
                         getString(
                             R.string.title_update_subscription_result,
                             result.configCount, result.successCount, result.failureCount, result.skipCount
                         )
                     )
-                    testRealPingAndSort()
-                    // hideLoading 会在测试完成后调用
+                    hideLoading()
                 }
                 if (result.configCount > 0) {
                     mainViewModel.reloadServerList()
