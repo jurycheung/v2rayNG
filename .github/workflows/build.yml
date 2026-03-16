@@ -101,13 +101,17 @@ jobs:
         cd ${{ github.workspace }}/V2rayNG
         echo "sdk.dir=${ANDROID_HOME}" > local.properties
         chmod 755 gradlew
-        ./gradlew licenseFdroidReleaseReport
         if [ "${{ steps.check_keystore.outputs.has_keystore }}" == "true" ] && [ -n "${{ steps.android_keystore.outputs.filePath }}" ] && [ -f "${{ steps.android_keystore.outputs.filePath }}" ]; then
           echo "Keystore found, building release version..."
-          ./gradlew assembleFdroidRelease
+          ./gradlew assembleFdroidRelease 2>&1 | tee build.log
         else
           echo "No keystore found, building debug version..."
-          ./gradlew assembleFdroidDebug
+          ./gradlew assembleFdroidDebug 2>&1 | tee build.log
+        fi
+        if [ ${PIPESTATUS[0]} -ne 0 ]; then
+          echo "Build failed!"
+          cat build.log
+          exit 1
         fi
 
     - name: Upload arm64-v8a APK
