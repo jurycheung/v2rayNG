@@ -301,7 +301,8 @@ object V2RayServiceManager {
 
             // 更新当前服务器的失败计数
             val currentGuid = MmkvManager.getSelectServer()
-            if (time <= 0 || time > SettingsManager.getAutoSwitchDelayThreshold()) {
+            // time < 0 表示连接失败，time > threshold 表示延迟过高（time == 0 表示未测试，不触发切换）
+            if (time < 0 || time > SettingsManager.getAutoSwitchDelayThreshold()) {
                 // 连接失败或延迟过高，增加失败计数
                 val failureCount = MmkvManager.getServerFailureCount(currentGuid.orEmpty()) + 1
                 MmkvManager.setServerFailureCount(currentGuid.orEmpty(), failureCount)
@@ -362,8 +363,15 @@ object V2RayServiceManager {
                         continue
                     }
 
+                    // Check if core is still running and service is available
                     if (!coreController.isRunning) {
                         Log.i(AppConfig.TAG, "AutoSwitch: Core stopped, aborting auto switch")
+                        return@launch
+                    }
+
+                    // Check if service is still available
+                    if (getService() == null) {
+                        Log.e(AppConfig.TAG, "AutoSwitch: Service is null, aborting auto switch")
                         return@launch
                     }
 
@@ -420,20 +428,35 @@ object V2RayServiceManager {
                     // Notify UI that auto switch is starting
                     MessageUtil.sendMsg2UI(service, AppConfig.MSG_AUTO_SWITCH_TO_AVAILABLE_START, availableConfig?.remarks.orEmpty())
 
-                    // Stop current core
-                    stopCoreLoop()
-
-                    // Small delay to ensure core is fully stopped
-                    kotlinx.coroutines.delay(500)
-
-                    // Set the new server and restart
+                    // Set the new server before stopping core
                     MmkvManager.setSelectServer(availableGuid)
 
-                    // Notify UI about auto switch
-                    MessageUtil.sendMsg2UI(service, AppConfig.MSG_AUTO_SWITCH_TO_AVAILABLE, availableConfig?.remarks.orEmpty())
+                    // Stop current core and wait for it to fully stop
+                    stopCoreLoop()
 
-                    // Restart with new server
-                    startVService(service, availableGuid)
+                    // Wait for core to fully stop (with timeout)
+                    var waitCount = 0
+                    while (coreController.isRunning && waitCount < 20) {
+                        kotlinx.coroutines.delay(100)
+                        waitCount++
+                    }
+
+                    if (coreController.isRunning) {
+                        Log.e(AppConfig.TAG, "AutoSwitch: Core failed to stop, forcing restart")
+                    }
+
+                    // Check if service is still available before restarting
+                    val currentService = getService()
+                    if (currentService == null) {
+                        Log.e(AppConfig.TAG, "AutoSwitch: Service is null after stopping core, cannot restart")
+                        return@launch
+                    }
+
+                    // Notify UI about auto switch
+                    MessageUtil.sendMsg2UI(currentService, AppConfig.MSG_AUTO_SWITCH_TO_AVAILABLE, availableConfig?.remarks.orEmpty())
+
+                    // Restart with new server (this will start the service with the new server GUID)
+                    startVService(currentService, availableGuid)
 
                     Log.i(AppConfig.TAG, "AutoSwitch: Completed switch to ${availableConfig?.remarks}")
                 } else {

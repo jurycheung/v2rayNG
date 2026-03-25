@@ -443,18 +443,20 @@ object SettingsManager {
 
     /**
      * Get the delay threshold for auto switch (in milliseconds).
-     * Default is 500ms.
+     * Default is 500ms. Minimum value is 100ms.
      */
     fun getAutoSwitchDelayThreshold(): Long {
-        return MmkvManager.decodeSettingsString(AppConfig.PREF_AUTO_SWITCH_DELAY_THRESHOLD, "500")?.toLongOrNull() ?: 500L
+        val value = MmkvManager.decodeSettingsString(AppConfig.PREF_AUTO_SWITCH_DELAY_THRESHOLD, "500")?.toLongOrNull() ?: 500L
+        return value.coerceAtLeast(100L) // Minimum 100ms to avoid false positives
     }
 
     /**
      * Get the failure count threshold before triggering auto switch.
-     * Default is 1 (trigger immediately).
+     * Default is 1 (trigger immediately). Minimum value is 1.
      */
     fun getAutoSwitchFailureCount(): Int {
-        return MmkvManager.decodeSettingsString(AppConfig.PREF_AUTO_SWITCH_FAILURE_COUNT, "1")?.toIntOrNull() ?: 1
+        val value = MmkvManager.decodeSettingsString(AppConfig.PREF_AUTO_SWITCH_FAILURE_COUNT, "1")?.toIntOrNull() ?: 1
+        return value.coerceAtLeast(1) // Minimum 1
     }
 
     /**
