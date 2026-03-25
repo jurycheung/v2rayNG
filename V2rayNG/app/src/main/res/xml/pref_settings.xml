@@ -278,6 +278,12 @@
             android:summary="@string/summary_pref_auto_sort_after_test"
             android:title="@string/title_pref_auto_sort_after_test" />
 
+        <CheckBoxPreference
+            android:key="pref_auto_switch_to_available_server"
+            android:defaultValue="false"
+            android:summary="@string/summary_pref_auto_switch_to_available_server"
+            android:title="@string/title_pref_auto_switch_to_available_server" />
+
         <EditTextPreference
             android:key="pref_delay_test_url"
             android:summary="@string/summary_pref_delay_test_url"

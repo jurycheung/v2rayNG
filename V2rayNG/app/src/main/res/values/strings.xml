@@ -158,6 +158,10 @@
     <string name="summary_pref_auto_remove_invalid_after_test">Test results may not be accurate; deleted config cannot be recovered.</string>
     <string name="title_pref_auto_sort_after_test">Auto sort after testing</string>
     <string name="summary_pref_auto_sort_after_test">Test results may not be accurate;</string>
+    <string name="title_pref_auto_switch_to_available_server">Auto switch to available server</string>
+    <string name="summary_pref_auto_switch_to_available_server">When current server connection fails, automatically test and switch to an available server</string>
+    <string name="auto_switch_to_server">Auto switch to server: %s</string>
+    <string name="auto_switch_no_available_server">Auto switch: No available server found</string>
 
     <string name="title_mux_settings">Mux Settings</string>
     <string name="title_pref_mux_enabled">Enable Mux</string>

@@ -486,6 +486,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         updateListAction.value = -2 // Special value to indicate tests finished
                     }
                 }
+
+                AppConfig.MSG_AUTO_SWITCH_TO_AVAILABLE -> {
+                    val serverName = intent.getStringExtra("content")
+                    if (serverName.isNullOrEmpty()) {
+                        getApplication<AngApplication>().toastError(R.string.auto_switch_no_available_server)
+                    } else {
+                        getApplication<AngApplication>().toastSuccess(
+                            getApplication<AngApplication>().getString(R.string.auto_switch_to_server, serverName)
+                        )
+                    }
+                }
             }
         }
     }

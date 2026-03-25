@@ -434,6 +434,14 @@ object SettingsManager {
     }
 
     /**
+     * Check if auto switch to available server is enabled.
+     * @return True if auto switch is enabled, false otherwise.
+     */
+    fun shouldAutoSwitchToAvailableServer(): Boolean {
+        return MmkvManager.decodeSettingsBool(AppConfig.PREF_AUTO_SWITCH_TO_AVAILABLE_SERVER, false)
+    }
+
+    /**
      * Ensure default settings are present in MMKV.
      */
     private fun ensureDefaultSettings() {
