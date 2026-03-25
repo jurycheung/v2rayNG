@@ -75,6 +75,8 @@ object AppConfig {
     const val PREF_AUTO_REMOVE_INVALID_AFTER_TEST = "pref_auto_remove_invalid_after_test"
     const val PREF_AUTO_SORT_AFTER_TEST = "pref_auto_sort_after_test"
     const val PREF_AUTO_SWITCH_TO_AVAILABLE_SERVER = "pref_auto_switch_to_available_server"
+    const val PREF_AUTO_SWITCH_DELAY_THRESHOLD = "pref_auto_switch_delay_threshold"
+    const val PREF_AUTO_SWITCH_FAILURE_COUNT = "pref_auto_switch_failure_count"
 
     /** Cache keys. */
     const val CACHE_SUBSCRIPTION_ID = "cache_subscription_id"
@@ -167,6 +169,7 @@ object AppConfig {
     const val MSG_MEASURE_CONFIG_FINISH = 74
     const val MSG_AUTO_SWITCH_TO_AVAILABLE = 8
     const val MSG_AUTO_SWITCH_TO_AVAILABLE_SUCCESS = 81
+    const val MSG_AUTO_SWITCH_TO_AVAILABLE_START = 82
 
     /** Notification channel IDs and names. */
     const val RAY_NG_CHANNEL_ID = "RAY_NG_M_CH_ID"

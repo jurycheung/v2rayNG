@@ -266,6 +266,32 @@ object MmkvManager {
     }
 
     /**
+     * Gets the consecutive failure count for a server.
+     */
+    fun getServerFailureCount(guid: String): Int {
+        if (guid.isBlank()) return 0
+        val aff = decodeServerAffiliationInfo(guid) ?: return 0
+        return aff.serConsecutiveFailures
+    }
+
+    /**
+     * Sets the consecutive failure count for a server.
+     */
+    fun setServerFailureCount(guid: String, count: Int) {
+        if (guid.isBlank()) return
+        val aff = decodeServerAffiliationInfo(guid) ?: ServerAffiliationInfo()
+        aff.serConsecutiveFailures = count
+        serverAffStorage.encode(guid, JsonUtil.toJson(aff))
+    }
+
+    /**
+     * Resets the failure count for a server.
+     */
+    fun resetServerFailureCount(guid: String) {
+        setServerFailureCount(guid, 0)
+    }
+
+    /**
      * Clears all test delay results.
      *
      * @param keys The list of server GUIDs.

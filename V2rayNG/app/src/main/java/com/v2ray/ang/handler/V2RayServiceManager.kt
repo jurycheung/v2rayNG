@@ -299,10 +299,26 @@ object V2RayServiceManager {
             }
             MessageUtil.sendMsg2UI(service, AppConfig.MSG_MEASURE_DELAY_SUCCESS, result)
 
-            // 如果连接测试失败且启用了自动切换，触发自动切换逻辑
-            if (time == -1L && SettingsManager.shouldAutoSwitchToAvailableServer()) {
-                Log.i(AppConfig.TAG, "StartCore-Manager: Connection failed, triggering auto switch to available server")
-                autoSwitchToAvailableServer(service)
+            // 更新当前服务器的失败计数
+            val currentGuid = MmkvManager.getSelectServer()
+            if (time <= 0 || time > SettingsManager.getAutoSwitchDelayThreshold()) {
+                // 连接失败或延迟过高，增加失败计数
+                val failureCount = MmkvManager.getServerFailureCount(currentGuid.orEmpty()) + 1
+                MmkvManager.setServerFailureCount(currentGuid.orEmpty(), failureCount)
+                Log.i(AppConfig.TAG, "StartCore-Manager: Connection failed (delay=$time), failure count=$failureCount")
+
+                // 检查是否需要自动切换
+                if (SettingsManager.shouldAutoSwitchToAvailableServer()) {
+                    val threshold = SettingsManager.getAutoSwitchFailureCount()
+                    if (failureCount >= threshold) {
+                        Log.i(AppConfig.TAG, "StartCore-Manager: Failure count ($failureCount) >= threshold ($threshold), triggering auto switch")
+                        MmkvManager.resetServerFailureCount(currentGuid.orEmpty())
+                        autoSwitchToAvailableServer(service)
+                    }
+                }
+            } else {
+                // 连接成功，重置失败计数
+                MmkvManager.resetServerFailureCount(currentGuid.orEmpty())
             }
 
             // Only fetch IP info if the delay test was successful
@@ -316,7 +332,7 @@ object V2RayServiceManager {
 
     /**
      * Automatically switches to an available server when the current one fails.
-     * Tests all servers and switches to the first available one.
+     * Tests all servers and switches to the first available one (fast switch strategy).
      */
     private fun autoSwitchToAvailableServer(service: Service) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -327,17 +343,25 @@ object V2RayServiceManager {
                 val allServerGuids = MmkvManager.decodeAllServerList()
                 if (allServerGuids.isEmpty()) {
                     Log.e(AppConfig.TAG, "AutoSwitch: No servers available")
+                    MessageUtil.sendMsg2UI(service, AppConfig.MSG_AUTO_SWITCH_TO_AVAILABLE, "")
                     return@launch
                 }
 
                 val currentGuid = MmkvManager.getSelectServer()
                 Log.i(AppConfig.TAG, "AutoSwitch: Current server is $currentGuid, testing ${allServerGuids.size} servers")
 
-                // Test each server and find the first available one
+                // Get delay threshold
+                val delayThreshold = SettingsManager.getAutoSwitchDelayThreshold()
+
+                // Test each server and find the first available one (fast switch)
                 var availableGuid: String? = null
-                var minDelay = Long.MAX_VALUE
 
                 for (guid in allServerGuids) {
+                    // Skip current server
+                    if (guid == currentGuid) {
+                        continue
+                    }
+
                     if (!coreController.isRunning) {
                         Log.i(AppConfig.TAG, "AutoSwitch: Core stopped, aborting auto switch")
                         return@launch
@@ -370,21 +394,18 @@ object V2RayServiceManager {
 
                         Log.i(AppConfig.TAG, "AutoSwitch: Server ${config.remarks} delay: $delay")
 
-                        if (delay > 0) {
+                        if (delay > 0 && delay <= delayThreshold) {
+                            // Found a usable server with acceptable delay
+                            availableGuid = guid
+
                             // Update the test result in storage
                             MmkvManager.encodeServerTestDelayMillis(guid, delay)
 
-                            // Use the first available server or the one with minimum delay
-                            if (availableGuid == null || delay < minDelay) {
-                                availableGuid = guid
-                                minDelay = delay
-                            }
-
-                            // If we found a server with good delay, we can stop early for fast switch
-                            if (delay < 500) { // Less than 500ms is considered good
-                                Log.i(AppConfig.TAG, "AutoSwitch: Found good server ${config.remarks} with delay $delay")
-                                break
-                            }
+                            Log.i(AppConfig.TAG, "AutoSwitch: Found available server ${config.remarks} with delay $delay (threshold: $delayThreshold)")
+                            break // Fast switch: stop at first available server
+                        } else if (delay > 0) {
+                            // Server is reachable but delay is high, still save the result
+                            MmkvManager.encodeServerTestDelayMillis(guid, delay)
                         }
                     } catch (e: Exception) {
                         Log.e(AppConfig.TAG, "AutoSwitch: Failed to test server ${config.remarks}", e)
@@ -392,12 +413,12 @@ object V2RayServiceManager {
                 }
 
                 // Switch to the available server
-                if (availableGuid != null && availableGuid != currentGuid) {
+                if (availableGuid != null) {
                     val availableConfig = MmkvManager.decodeServerConfig(availableGuid)
                     Log.i(AppConfig.TAG, "AutoSwitch: Switching to server ${availableConfig?.remarks}")
 
-                    // Save the current server GUID
-                    val targetGuid = availableGuid
+                    // Notify UI that auto switch is starting
+                    MessageUtil.sendMsg2UI(service, AppConfig.MSG_AUTO_SWITCH_TO_AVAILABLE_START, availableConfig?.remarks.orEmpty())
 
                     // Stop current core
                     stopCoreLoop()
@@ -406,21 +427,19 @@ object V2RayServiceManager {
                     kotlinx.coroutines.delay(500)
 
                     // Set the new server and restart
-                    MmkvManager.setSelectServer(targetGuid)
+                    MmkvManager.setSelectServer(availableGuid)
 
                     // Notify UI about auto switch
                     MessageUtil.sendMsg2UI(service, AppConfig.MSG_AUTO_SWITCH_TO_AVAILABLE, availableConfig?.remarks.orEmpty())
 
                     // Restart with new server
-                    startVService(service, targetGuid)
+                    startVService(service, availableGuid)
 
                     Log.i(AppConfig.TAG, "AutoSwitch: Completed switch to ${availableConfig?.remarks}")
-                } else if (availableGuid == null) {
+                } else {
                     Log.e(AppConfig.TAG, "AutoSwitch: No available server found")
                     // Notify UI that no available server was found
                     MessageUtil.sendMsg2UI(service, AppConfig.MSG_AUTO_SWITCH_TO_AVAILABLE, "")
-                } else {
-                    Log.i(AppConfig.TAG, "AutoSwitch: Current server is still the best")
                 }
             } catch (e: Exception) {
                 Log.e(AppConfig.TAG, "AutoSwitch: Error during auto switch", e)

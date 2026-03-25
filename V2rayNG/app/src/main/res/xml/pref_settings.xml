@@ -285,6 +285,20 @@
             android:title="@string/title_pref_auto_switch_to_available_server" />
 
         <EditTextPreference
+            android:inputType="number"
+            android:key="pref_auto_switch_delay_threshold"
+            android:summary="500"
+            android:title="@string/title_pref_auto_switch_delay_threshold"
+            android:defaultValue="500" />
+
+        <EditTextPreference
+            android:inputType="number"
+            android:key="pref_auto_switch_failure_count"
+            android:summary="1"
+            android:title="@string/title_pref_auto_switch_failure_count"
+            android:defaultValue="1" />
+
+        <EditTextPreference
             android:key="pref_delay_test_url"
             android:summary="@string/summary_pref_delay_test_url"
             android:title="@string/title_pref_delay_test_url" />

@@ -162,6 +162,10 @@
     <string name="summary_pref_auto_switch_to_available_server">When current server connection fails, automatically test and switch to an available server</string>
     <string name="auto_switch_to_server">Auto switch to server: %s</string>
     <string name="auto_switch_no_available_server">Auto switch: No available server found</string>
+    <string name="title_pref_auto_switch_delay_threshold">Auto switch delay threshold (ms)</string>
+    <string name="summary_pref_auto_switch_delay_threshold">Delay threshold in milliseconds, servers with higher delay will not be selected</string>
+    <string name="title_pref_auto_switch_failure_count">Auto switch failure count threshold</string>
+    <string name="summary_pref_auto_switch_failure_count">Number of consecutive failures before triggering auto switch</string>
 
     <string name="title_mux_settings">Mux Settings</string>
     <string name="title_pref_mux_enabled">Enable Mux</string>
